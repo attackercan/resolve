@@ -17,9 +17,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/attackercan/resolve"
 	"github.com/caffix/queue"
 	"github.com/miekg/dns"
-	"github.com/owasp-amass/resolve"
 	"golang.org/x/net/publicsuffix"
 )
 

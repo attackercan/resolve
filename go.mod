@@ -1,4 +1,4 @@
-module github.com/owasp-amass/resolve
+module github.com/attackercan/resolve
 
 go 1.21
 

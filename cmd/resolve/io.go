@@ -11,9 +11,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/attackercan/resolve"
 	"github.com/caffix/stringset"
 	"github.com/miekg/dns"
-	"github.com/owasp-amass/resolve"
 )
 
 var resolvers = []string{
