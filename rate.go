@@ -35,15 +35,17 @@ type RateTracker struct {
 	domainToServers map[string][]string
 	serverToLimiter map[string]*rateTrack
 	catchLimiter    *rateTrack
+	isFixedResolver bool
 }
 
 // NewRateTracker returns an active RateTracker that tracks and rate limits per name server.
-func NewRateTracker() *RateTracker {
+func NewRateTracker(isFixedResolver bool) *RateTracker {
 	r := &RateTracker{
 		done:            make(chan struct{}, 1),
 		domainToServers: make(map[string][]string),
 		serverToLimiter: make(map[string]*rateTrack),
 		catchLimiter:    newRateTrack(),
+		isFixedResolver: isFixedResolver,
 	}
 
 	go r.updateRateLimiters()
@@ -68,7 +70,10 @@ func (r *RateTracker) Stop() {
 
 // Take blocks as required by the implemented rate limiter for the associated name server.
 func (r *RateTracker) Take(sub string) {
-	tracker := r.getDomainRateTracker(sub)
+	tracker := r.catchLimiter
+	if r.isFixedResolver != true {
+		tracker = r.getDomainRateTracker(sub)
+	}
 
 	tracker.Lock()
 	rate := tracker.rate
@@ -79,7 +84,10 @@ func (r *RateTracker) Take(sub string) {
 
 // Success signals to the RateTracker that a request for the provided subdomain name was successful.
 func (r *RateTracker) Success(sub string) {
-	tracker := r.getDomainRateTracker(sub)
+	tracker := r.catchLimiter
+	if r.isFixedResolver != true {
+		tracker = r.getDomainRateTracker(sub)
+	}
 
 	tracker.Lock()
 	tracker.success++
@@ -88,7 +96,10 @@ func (r *RateTracker) Success(sub string) {
 
 // Timeout signals to the RateTracker that a request for the provided subdomain name timed out.
 func (r *RateTracker) Timeout(sub string) {
-	tracker := r.getDomainRateTracker(sub)
+	tracker := r.catchLimiter
+	if r.isFixedResolver != true {
+		tracker = r.getDomainRateTracker(sub)
+	}
 
 	tracker.Lock()
 	tracker.timeout++

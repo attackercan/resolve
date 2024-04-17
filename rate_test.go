@@ -10,7 +10,7 @@ import (
 )
 
 func TestUpdateRateLimiters(t *testing.T) {
-	rt := NewRateTracker()
+	rt := NewRateTracker(false)
 	defer rt.Stop()
 
 	domain := "owasp.org"
