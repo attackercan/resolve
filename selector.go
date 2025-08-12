@@ -45,6 +45,9 @@ func (r *randomSelector) GetResolver() *resolver {
 	if max == -1 {
 		return nil
 	}
+	if max <= 0 {
+		return nil
+	}
 	sel := rand.Intn(max)
 
 	r.Lock()
